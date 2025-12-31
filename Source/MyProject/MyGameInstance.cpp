@@ -50,5 +50,11 @@ void UMyGameInstance::Init()
 	FName key1(TEXT("PELVIS"));
 	FName key2(TEXT("pelvis"));
 	UE_LOG(LogTemp, Log, TEXT("FName 비교 결과: %s"), key1 == key2 ? TEXT("같음") : TEXT("다름"));
+
+	//for (int i = 0; i < 10000; ++i)
+	//{
+	//	FName SearchInNamePool = FName(TEXT("pelvis"));  // FName 인스턴스 생성
+	//	const static FName StaticOnlyOnce = FName(TEXT("pelvis"));  // static으로 한번만 생성
+	//}
 }
  
