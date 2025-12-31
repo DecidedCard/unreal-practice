@@ -31,5 +31,24 @@ void UMyGameInstance::Init()
 	{
 		UE_LOG(LogTemp, Log, TEXT("Split Test: %s 와 %s"), *Left, *Right);
 	}
+
+	int32 IntValue = 32;
+	float FloatValue = 3.141592;
+
+	FString FloatIntString = FString::Printf(TEXT("Int:%d Float:%f"), IntValue, FloatValue);  // Printf() 함수로 포맷팅된 문자열 생성
+	FString FloatString = FString::SanitizeFloat(FloatValue); // SanitizeFloat() 함수로 float를 문자열로 변환
+	FString IntString = FString::FromInt(IntValue); // FromInt() 함수로 int를 문자열로 변환
+
+	UE_LOG(LogTemp, Log, TEXT("%s"), *FloatIntString);
+	UE_LOG(LogTemp, Log, TEXT("Int:%s Float:%s"), *IntString, *FloatString);
+
+	int32 IntValueFromString = FCString::Atoi(*IntString); // Atoi() 함수로 문자열을 int로 변환
+	float FloatValueFromString = FCString::Atof(*FloatString); // Atof() 함수로 문자열을 float로 변환
+	FString FloatIntString2 = FString::Printf(TEXT("Int:%d Float:%f"), IntValueFromString, FloatValueFromString);
+	UE_LOG(LogTemp, Log, TEXT("%s"), *FloatIntString2);
+
+	FName key1(TEXT("PELVIS"));
+	FName key2(TEXT("pelvis"));
+	UE_LOG(LogTemp, Log, TEXT("FName 비교 결과: %s"), key1 == key2 ? TEXT("같음") : TEXT("다름"));
 }
  
