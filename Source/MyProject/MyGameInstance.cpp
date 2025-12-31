@@ -7,5 +7,7 @@ void UMyGameInstance::Init()
 {
 	Super::Init();
 
-	UE_LOG(LogTemp, Log, TEXT("%s"), TEXT("Hello Unreal!"));
+	TCHAR LogCharArray[] = TEXT("Hello Unreal");
+	UE_LOG(LogTemp, Log, TEXT("%s"), LogCharArray);
 }
+ 
