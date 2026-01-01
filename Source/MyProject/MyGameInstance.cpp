@@ -1,7 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "MyGameInstance.h"
+#include "Student.h"
+#include "Teacher.h"
 
 UMyGameInstance::UMyGameInstance()  // 생성자 정의
 {
@@ -79,5 +80,32 @@ void UMyGameInstance::Init()
 	UE_LOG(LogTemp, Log, TEXT("학교 이름 기본값: %s"), *GetClass()->GetDefaultObject<UMyGameInstance>()->SchoolName);
 
 	UE_LOG(LogTemp, Log, TEXT("================================================="));
+
+	UStudent* Student = NewObject<UStudent>(); // UStudent 인스턴스 생성
+	UTeacher* Teacher = NewObject<UTeacher>(); // UTeacher 인스턴스 생성
+
+	Student->SetName(TEXT("학생1")); // 학생 이름 변경
+	UE_LOG(LogTemp, Log, TEXT("새로운 학생 이름 %s"), *Student->GetName()); // 변경된 학생 이름 출력
+
+	FString CurretTeacherName;
+	FString NewTeacherName(TEXT("테스트"));
+	FProperty* NameProp = UTeacher::StaticClass()->FindPropertyByName(TEXT("Name")); // UTeacher 클래스에서 "Name" 프로퍼티 찾기
+	if (NameProp)
+	{
+		NameProp->GetValue_InContainer(Teacher, &CurretTeacherName); // Teacher 인스턴스에서 "Name" 프로퍼티 값 가져오기
+		UE_LOG(LogTemp, Log, TEXT("현재 선생님 이름 %s"), *CurretTeacherName); // 가져온 선생님 이름 출력
+
+		NameProp->SetValue_InContainer(Teacher, &NewTeacherName); // Teacher 인스턴스에서 "Name" 프로퍼티 값 설정하기
+		UE_LOG(LogTemp, Log, TEXT("새로운 선생님 이름 %s"), *Teacher->GetName()); // 변경된 선생님 이름 출력
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("================================================="));
+
+	Student->DoLesson();
+	UFunction* DoLessonFunc = Teacher->GetClass()->FindFunctionByName(TEXT("DoLesson")); // UTeacher 클래스에서 "DoLesson" 함수 찾기
+	if (DoLessonFunc)
+	{
+		Teacher->ProcessEvent(DoLessonFunc, nullptr); // Teacher 인스턴스에서 "DoLesson" 함수 호출
+	}
 }
  
