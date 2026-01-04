@@ -1,8 +1,23 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "MyGameInstance.h"
 #include "Algo/Accumulate.h"
+
+FString MakeRandomName() // 랜덤으로 이름 생성
+{
+	TCHAR FirstChar[] = TEXT("김이박최");
+	TCHAR MiddleChar[] = TEXT("상혜지성");
+	TCHAR LastChar[] = TEXT("수은원연");
+
+	TArray<TCHAR> RandArray;
+	RandArray.SetNum(3);
+	RandArray[0] = FirstChar[FMath::RandRange(0, 3)];
+	RandArray[1] = MiddleChar[FMath::RandRange(0, 3)];
+	RandArray[2] = LastChar[FMath::RandRange(0, 3)];
+
+	return RandArray.GetData();
+}
 
 void UMyGameInstance::Init()
 {
@@ -60,4 +75,63 @@ void UMyGameInstance::Init()
 	Int32Set.Add(6); // Adds number 6 back
 	Int32Set.Add(8); // Adds number 8 back
 	Int32Set.Add(10); // Adds number 10 back
+
+	const int32 StudentNum = 300;
+	for (int32 ix = 1; ix <= StudentNum; ++ix)
+	{
+		StudentsData.Emplace(FStudentData(MakeRandomName(), ix));
+	}
+
+	TArray<FString> AllStudentsNames;
+	Algo::Transform(StudentsData, AllStudentsNames,
+		[](const FStudentData& Val)
+		{
+			return Val.Name;
+		}
+	);
+
+	UE_LOG(LogTemp, Log, TEXT("모든 학생 이름의 수: %d"), AllStudentsNames.Num());
+
+	TSet<FString> AllUniqueNames;
+	Algo::Transform(StudentsData, AllUniqueNames,
+		[](const FStudentData& Val)
+		{
+			return Val.Name;
+		}
+	);
+
+	UE_LOG(LogTemp, Log, TEXT("중복 없는 학생 이름의 수: %d"), AllUniqueNames.Num());
+
+	Algo::Transform(StudentsData, StudentsMap,
+		[](const FStudentData& Val)
+		{
+			return TPair<int32, FString>(Val.Order, Val.Name);
+		}
+	);
+	UE_LOG(LogTemp, Log, TEXT("순번에 따른 학생 맵의 레코드 수: %d"), StudentsMap.Num());
+
+	TMap<FString, int32> StudentsMapByUniqueName; // 맵, 중복 허용하지 않음
+	Algo::Transform(StudentsData, StudentsMapByUniqueName,
+		[](const FStudentData& Val)
+		{
+			return TPair<FString, int32>(Val.Name, Val.Order);
+		}
+	);
+
+	UE_LOG(LogTemp, Log, TEXT("이름에 따른 학생 맵의 레코드 수: %d"), StudentsMapByUniqueName.Num());
+
+	TMultiMap<FString, int32> StudentsMapByName; // 멀티맵, 중복 허용
+	Algo::Transform(StudentsData, StudentsMapByName,
+		[](const FStudentData& Val)
+		{
+			return TPair<FString, int32>(Val.Name, Val.Order);
+		}
+	);
+	UE_LOG(LogTemp, Log, TEXT("이름에 따른 학생 멀티맵의 레코드 수: %d"), StudentsMapByName.Num());
+
+	const FString TargetName(TEXT("이혜은")); // 검색할 이름
+	TArray<int32> AllOrders; // 검색한 이름이 몇명인지 저장할 변수
+	StudentsMapByName.MultiFind(TargetName, AllOrders); // 몇개 인지 찾아서 저장
+
+	UE_LOG(LogTemp, Log, TEXT("이름이 %s인 학생 수: %d"), *TargetName, AllOrders.Num());
 }
